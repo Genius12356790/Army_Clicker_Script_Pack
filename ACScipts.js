@@ -25,10 +25,10 @@ function itemsleft(mode=0){
 				totalcoi += itemyVShopeA[i][1][3];
 			}
 			if (itemyVShopeA[i][1][9] == 1){
-				totalvip += itemyVShopeA[i][1][3];
+				totalvip += itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13];
 			}
 			if (itemyVShopeA[i][1][9] == 2){
-				totaloffer += itemyVShopeA[i][1][3];
+				totaloffer += itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13];
 			}
 		}
 	}
