@@ -1,12 +1,14 @@
 function itemsleft(mode=0){
 	let have = 0;
 	let havect = [];
+    let havecur = [];
 	let havecoi = 0;
 	let haveextras = 0;
 	let havevip = 0;
 	let haveoffer = 0;
 	let total = 0;
 	let totalct = [];
+	let totalcur = [];
 	let totalcoi = 0;
 	let totalextras = 0;
 	let totalvip = 0;
@@ -15,7 +17,9 @@ function itemsleft(mode=0){
 		if (itemyVShopeA[i][1][3]){
 			total += itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13];
 			let n = itemyVShopeA[i][1][1];
-			totalct[n] = totalct[n] ? totalct[n] + itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13]: itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13];
+			let stacks = itemyVShopeA[i][1][3] + itemyVShopeA[i][1][13];
+			totalct[n] = totalct[n] ? totalct[n] + stacks: stacks;
+			totalcur[n] = totalcur[n] ? totalcur[n] + stacks * itemyVShopeA[i][1][0]: stacks * itemyVShopeA[i][1][0];
 			totalextras += itemyVShopeA[i][1][13];
 			if (itemyVShopeA[i][1][9] == 13){
 				totalcoi += itemyVShopeA[i][1][3];
@@ -29,10 +33,11 @@ function itemsleft(mode=0){
 		}
 	}
 	for(let i in hracVeciA){
-		if (hracVeciA[i] != undefined){
+		if (hracVeciA[i]){
 			have += hracVeciA[i];
 			let n = itemyVShopeA[i][1][1];
 			havect[n] = havect[n] ? havect[n] + hracVeciA[i]: hracVeciA[i];
+			havecur[n] = havecur[n] ? havecur[n] + hracVeciA[i] * itemyVShopeA[i][1][0]: hracVeciA[i] * itemyVShopeA[i][1][0];
 			if (extraStacksA[i]){
 				haveextras += extraStacksA[i];
 			}
@@ -55,11 +60,28 @@ function itemsleft(mode=0){
 	name[5] = "Platinum";
 	name[6] = "Event";
 	name[8] = "Ruby";
+	let mod = [];
+	mod[0] = ["(T)"];
+	mod[3] = ["(K)"];
+	mod[5] = ["(M)"];
+	mod[6] = ["(K)"];
+	mod[8] = ["(K)"];
+	havecur[0] = Math.floor(havecur[0] / 1000000000000);
+	totalcur[0] = Math.floor(totalcur[0] / 1000000000000);
+	havecur[3] = Math.floor(havecur[3] / 1000);
+	totalcur[3] = Math.floor(totalcur[3] / 1000);
+	havecur[5] = Math.floor(havecur[5] / 1000000);
+	totalcur[5] = Math.floor(totalcur[5] / 1000000);
+	havecur[6] = Math.floor(havecur[6] / 1000);
+	totalcur[6] = Math.floor(totalcur[6] / 1000);
+	havecur[8] = Math.floor(havecur[8] / 1000);
+	totalcur[8] = Math.floor(totalcur[8] / 1000);
 	if (mode){
 		let itemsdata = Array();
 		itemsdata.push([have.toString(), total.toString(), "Stacks obtained"]);
-        for (let i in totalct){
+        for (let i in havect){
 	    	itemsdata.push([havect[i].toString(), totalct[i].toString(), "Stacks of " + (name[i] ? name[i] : i.toString()) + " obtained"]);
+			itemsdata.push([havecur[i].toString(), totalcur[i].toString(), "Currency of " + (name[i] ? name[i] : i.toString()) + (mod[i]?mod[i]:"") + " spent"]);
 	    }
 		itemsdata.push([haveextras.toString(), totalextras.toString(), "Extra stacks obtained"]);
 		itemsdata.push([havecoi.toString(), totalcoi.toString(), "Chest stacks obtained"]);
@@ -69,8 +91,9 @@ function itemsleft(mode=0){
 	}
 	else{
 		console.log("Stacks obtained: " + have.toString() + "/" + total.toString() + " | " +(total - have).toString() + " left.");
-	    for (let i in totalct){
+	    for (let i in havect){
 	    	console.log("Stacks of " + (name[i] ? name[i] : i.toString()) + " obtained: " + havect[i].toString() + "/" + totalct[i].toString() + " | " +(totalct[i] - havect[i]).toString() + " left.");
+			console.log("Currency of " + (name[i] ? name[i] : i.toString()) + (mod[i]?mod[i]:"") + " spent: " + havecur[i].toString() + "/" + totalcur[i].toString() + " | " +(totalcur[i] - havecur[i]).toString() + " left.");
 	    }
 	    console.log("Extra stacks obtained: " + haveextras.toString() + "/" + totalextras.toString() + " | " +(totalextras - haveextras).toString() + " left.");
 	    console.log("Chest stacks obtained: " + havecoi.toString() + "/" + totalcoi.toString() + " | " +(totalcoi - havecoi).toString() + " left.");
@@ -355,3 +378,26 @@ if(IsInArray($co,LOC_item_vysvetlivkaArray)){_out+=ItemInfoBut([_cislo,$co]);
 }_out+=(somTESTER?SPC+'['+$co+']':'');
 _out+='</td></tr>';
 return _out;}
+
+function ChapterDificultyStr(_kapitola){var _out=SPC;
+var _dif=0;
+var _farba='';
+var _myLevelChapter=GetMyChapterPodlaLevelu();
+dif=3;
+if(_myLevelChapter>=_kapitola||_kapitola==2)_dif=3;
+if(_myLevelChapter>_kapitola+1&&hrac[11]>_kapitola)_dif=2;
+if((_myLevelChapter>_kapitola+6&&hrac[11]>_kapitola)||_kapitola==1)_dif=1;
+if(_kapitola>2||PredchadzajuciLevel>40){if(_myLevelChapter>_kapitola+8){_farba='#3E653C';
+_dif=0;
+}if(_myLevelChapter<_kapitola){_farba='#874D2F';
+_dif=4;
+}if(_myLevelChapter+1<_kapitola){_farba='#7C091C';
+_dif=_kapitola-_myLevelChapter+4;
+}}
+if(_dif>15){_out+=LOC_DIF[15] + '+' + (_dif - 15).toString()}
+else{_out+=LOC_DIF[_dif];};
+if(_farba)_out=FSizeColB(12,_farba,_out);
+if(_dif>4)_out+=SPC+LOC_HUNT_XP;
+_out+=SPC;
+return'<span '+F02o(LOC_OBTIAZNOST+BRBR+FSize(10,LOC_OBTIAZNOST3+GetRecommendedPlayerLevel(_kapitola-2)+BRBR+LOC_OBTIAZNOST2))+'>'+_out+'</span>';
+};
