@@ -156,7 +156,6 @@
 		}else{F068('achTrackerDiv','');
 		}RecalculateBody2Height();}
 
-
 	function OpenShop(_filter,_riadok){shopOpenedAgo=0;
 	F061('quickshoppopup');
 	CloseCaravan();
@@ -314,7 +313,11 @@
 	_out+=SPC+F09d(LOC_shopsett,'OpenShopSettings();','');
 	if(refundItems.length>0)if(PredchadzajuciLevel>=400) 
 	_out+=SPC+F09d('REFUND ITEMS','RefundItemsMenu();','');
-	if(PredchadzajuciLevel>=75&&itemyVyssiePocet>0)_out+='<div id="higherlevelitems"><span style="position:relative;top:-20px;">'+LOC_higherLVLitems+'</span>'+itemyVyssie.toString()+'</div>';
+    let itemyVyssiea = '';
+	for (let i in itemyVyssie){
+		itemyVyssiea += itemyVyssie[i];
+	};
+	if(PredchadzajuciLevel>=75&&itemyVyssiePocet>0)_out+='<div id="higherlevelitems"><span style="position:relative;top:-20px;">'+LOC_higherLVLitems+'</span>'+itemyVyssiea+'</div>';
 	_out+='</div>';
 	if(somvofcbJS||PredchadzajuciLevel<mensiShopLVL){F07e(_out,'','shopPopupFCB',sirkaShopScreenu2-60,0,'','','','',50,'','CloseShop();','',0);
 	F098('shopPopupFCBIN').style.height=(shop_riadkov_nastranu*200+180+40)+'px';
@@ -345,7 +348,14 @@
 	RefreshBocneinfoNumbers('shop'); 
 	}ItemsDescriptionsRescale();
 	if(PredchadzajuciLevel<20){if(hrac[H_ZLATO]>=500)if(F05p(31)<20){setTimeout(()=>{BlikBlik('shop_vec_31_buy_but');
-	},500)}}}
+	},500)}}}function ItemsDescriptionsRescale(){elements=SelectByClass('item_popis_td_div');
+	let _maxH=109;
+	for(let i in elements)if(elements[i]&&elements[i].classList){let _h=elements[i].getBoundingClientRect().height;
+	if(_h> _maxH){let scaleXY=_maxH / (_h+10);
+	elements[i].style.transform=`scale(${scaleXY},${scaleXY})`;
+	elements[i].style.top=-((_h-_maxH)*0.5)+'px';
+	elements[i].style.position='absolute';
+	}}}
 
 	function PlayerDetails(){try{visiblePlayerDetails=1;
 	F03e();
@@ -433,15 +443,15 @@
 		damage += (itemBonusOverview[3] + pomocBonusyEffects[211]) * Math.floor(time / 6);
 		damage += (itemBonusOverview[8] + pomocBonusyEffects[211]) * Math.floor(time / 8);
 		damage += (itemBonusOverview[12] + pomocBonusyEffects[211]) * Math.floor(time / 10);
-		
+
 		let bombmod = 0;
-		let bombleft = 50;
+		let bombleft = GetMaxConsumed();
 		if (bombleft > hrac[94]){
 			bombleft -= hrac[94];
 			bombmod = hrac[94] * 1.15;
 		}
 		else{
-			bombmod = 65;
+			bombmod = GetMaxConsumed()*1.15;
 			bombleft = 0;
 		}
 		if (pomocBonusyEffects[220]){
@@ -493,201 +503,201 @@
 	_hint+='<table class="puHintTable2"><tr><td style="width:90px;text-align:right;">'+(JeFuelVisible()?'Default<br>Rewards<br>per Fuel':'Mission<br>Rewards:')+'</td><td>:</td><td><div style="line-height:16px; max-width:280px;">'+MissionRewardsStr(_i)+'</div></td></tr></table>'; 
 	}catch(e){alert3('missionHint'+e);}return _hint;
 	};
-
 	
-	function ShopItemBlok(_vec1,_len_vnutro,_robSoldout,_lenCiSaDa){if(!_vec1){return'';
-	}var _itemLocked=false;
-	var _daSaKupit=true;
-	var _nedaSaKupitHint='';
-	var _vec_cena=_vec1[1];
-	var _cena=F06b(_vec1);
-	var _vecID=_vec1[0];
-	var _xpZaCenu=F03h(_vec1,_cena,_vec_cena[1],_vec_cena[6],_vec_cena[4]);
-	var _lvlrequired=F02h(_vec1);
-	let _myMaxLevel=GetMyMaxLevel();
-	var maxVec1=F05j(_vec1);
-	var _jeVypredane=false;
-	if(!_robSoldout)_robSoldout=0;
-	let __mamPocetVeci=F05p(_vecID);
-	var _testLock=false;
-	if(_vec_cena[5]>hrac[11]) 
-	if(__mamPocetVeci<=0){if(_maxLockedItems<MAX_LOCKED_ITEMS_KUK)if(PredchadzajuciLevel+100>_vec_cena[6])if(PredchadzajuciLevel>500)if(_vec_cena[9]==0)if(_vec_cena[12]==0)if(_vec_cena[1]==5||_vec_cena[1]==0)if(_vec_cena[5]<hrac[11]+5+(_testLock?5:0)) 
-	if(_vec1[4].length<=1)if(IsInArray(_vec1[4][0][1],unlockableAtts)){_itemLocked=true;
-	_maxLockedItems++;
-	}}var _dosiaholMax=(__mamPocetVeci>=maxVec1?1:0); 
-	if(maxVec1)if(!ajKupene&&!IsInArray(_vecID,posledne_kupeneVeci))if(_dosiaholMax){_jeVypredane=true;
-	if(!_robSoldout){return'';
-	}}if(onlyNonBoughtItems&&__mamPocetVeci>0){return'';
-	}if(_vec1[5]==99){return'';
-	}if(__mamPocetVeci==0){if(_vec1[5]==36)if((activeShopFilter!=0&&activeShopFilter!=10)||pocetPrejdeniNa1Session<8)if(!IN_TEST)return'';
-	if(_vec1[5]==37)if((activeShopFilter!=0&&activeShopFilter!=10)||pocetPrejdeniNa1Session<4)return'';
-	}if(_vec1[5]==34||_vec1[5]==35){if(hracVeciA[SECRET_THIRD_EYE_ID]){}else{if(__mamPocetVeci==0)if(pocetSecretItemovVidno>=2)return'';
-	if(_vec1[5]==34){if(hrac[131]%4!=0) 
-	return'';else if((pocetShopOtvoreni%17)!=4+(_vec1[0]+3)%9)return'';
-	}if(_vec1[5]==35)if(__mamPocetVeci<maxVec1){if((pocetShopOtvoreni%17)!=3+(_vec1[0]+3)%9)return'';
-	}}}var jeEventItem=(_vec_cena[9]==6?1:0);
-	var jeEventCost=(_vec_cena[1]==6?1:0);
-	if(vipShopFilter==1&&_vec_cena[9]!=1)return'';
-	if(!visibleVIPitems&&_vec_cena[9]==1)return'';
-	if(_vec_cena[1]==8&&!SuRubiny()) 
-	return'';
-	if(_vec_cena[9]==8&&__mamPocetVeci==0) 
-	return'';
-	if(_vec_cena[9]==12&&__mamPocetVeci==0) 
-	return'';
-	if(itemBonusOverview[115]==0)if((_vec_cena[9]==9 )&&_vec1[0]%25!=PredchadzajuciLevel%25) 
-	if(__mamPocetVeci==0)return'';
-	if((_vec_cena[7]==7||_vec1[3]=='et')&&__mamPocetVeci==0) 
-	return'';
-	if(jeEventItem&&!IsEvent(86400*4)&&__mamPocetVeci==0) 
-	return'';
-	if(jeEventItem&&!IsEvent(86400*4)&&!ajKupene) 
-	return'';
-	else if(jeEventItem&&(!IsEvent(604800)&&(__mamPocetVeci<=0||!ajKupene )))return'';
-	if(jeEventItem&&(activeShopFilter!=11&&activeShopFilter!=10&&activeShopFilter!=0)&&activeShopFilter<1000000)return'';
-	if(jeEventItem)if(!IsEvent())if(_vec1[1][0]>hrac[98]) 
-	return'';
-	if(jeEventCost) if(!jeEventItem){if(IsEvent())return'';
-	if(_vec1[1][0]>hrac[98])return'';
-	}if(jeEventItem) if(PredchadzajuciLevel<600)if(_vec1[1][0]>hrac[98]+5)if(__mamPocetVeci<=0)return'';
-	if(!IsRetroWeek())if(GetItemItemAtribut(_vec1,199))return'';
-	if(_vec1[5]!=199){if(hrac[132]<=0)if(GetItemItemAtribut(_vec1,186))return'';
-	if(GetItemItemAtribut(_vec1,65)){if(!IsCWactiv()&&!IsClanDiggingActive()&&!IsPlagueActive()){return'';
-	}}}if(_vec_cena[9]==13){if(!ajKupene||__mamPocetVeci==0){return'';
-	}}var _IsActualSaleItem=false;
-	if(__mamPocetVeci==0){if(_vec_cena[9]==11){return'';
-	}if(_vec_cena[9]==2){if(pocetSaleItemsInShop>=2){return'';
-	}if(_vec1[5]!=199){_IsActualSaleItem=IsSaleItem(_vec1[0]);
-	}if(!_IsActualSaleItem){return'';
-	}pocetSaleItemsInShop++;
-	}if((_vec_cena[9]==3||_vec_cena[9]==4)) 
-	return'';
-	}if(_vec_cena[9]==5&&!IsVip()) 
-	return'';
-	if(!MaArenu()&&_vec1[3]=='a'){return'';
-	}if(PredchadzajuciLevel<300&&hrac[18]>=GetMaxFuelCap()){for(let vb in _vec1[4]){if(_vec1[4][vb][1]==40){return'';
-	}}}var _requiredItem=0;
-	var _requiredVP=0;
-	if(_vec1[5]!=199){_requiredItem=GetItemItemAtribut(_vec1,105);
-	if(_requiredItem){if(!MamVykupenuVec(_requiredItem)&&__mamPocetVeci==0){return'';
-	}}_requiredVP=GetItemItemAtribut(_vec1,155);
-	if(GetValorPoints()<_requiredVP){_daSaKupit=false;
-	}if(GetValorPoints()+100<_requiredVP&&!(_requiredVP%1000==0&&GetValorPoints()+2000>=_requiredVP)){return'';
-	}}let _requiredDATE=GetItemItemAtribut(_vec1,58,2);
-	if(Math.max(PHPtime4,hrac[129])<=_requiredDATE){return'';
-	}var lockedUltiMod=false;
-	if(IsVip()&&_vecID==3407){return'';
-	}if(_itemLocked) if(costfilter>0){return'';
-	}if(GetItemItemAtribut(_vec1,232)){return'';
-	}if(_vecID==3597&&itemyNeskorPocet<=0){return'';
-	}if(refundItems2[_vecID]){return'';}
-	//
-	soonItemsBarAdd(_vecID);
-	//
-	if(_vec_cena[5]>hrac[11]) 
-	if(__mamPocetVeci<=0)if(!_itemLocked){return'';
-	}if(!_itemLocked)if(_lvlrequired>_myMaxLevel+(PredchadzajuciLevel<5?0:1)&&__mamPocetVeci==0&&_vecID!=3)return'';
-	if(_vec1[4])if(_vec1[4][0][1]==115){if(itemBonusOverview[116]>=MAX_items_mythical){return'';
-	}}{if(hladamAtts.length||lastSearch!=''){let nasielAtt=false;
-	if(hladamAtts.length>0){if(_vec1[5]==36||_vec1[5]==37) if(__mamPocetVeci<=0) 
-	return'';
-	for(let b1 in _vec1[4]){if(hladamAtts.indexOf(_vec1[4][b1][1]*1)>=0){nasielAtt=true;
-	break;
-	}}}if(!nasielAtt&&lastSearch!=''){let _meno='';
-	_meno=MenoItemuNove2(_vec1).toLowerCase();
-	if(_meno.indexOf(lastSearch)<0){return'';
-	}}if(_vec1[5]==34||_vec1[5]==35){return'';
-	}}}if(_lenCiSaDa){if(_dosiaholMax)return'';
-	if(_myMaxLevel<_lvlrequired&&__mamPocetVeci<=0)return'';
-	if(_vec1[5]==34||_vec1[5]==35)pocetSecretItemovVidno++;
-	return 1;
-	}if(_vec1[5]==34||_vec1[5]==35){pocetSecretItemovVidno++;
-	}var _jeOtazka=((_vec_cena[1]==1||_vec_cena[1]==2||_vec_cena[1]==7)&&uzKupilVec[_vecID]==0&&_vec_cena[12]<=0?1:0);
-	var buyClickStr='onmousedown="F02q('+_jeOtazka+',\''+LOC_SI_SI_ISTY_UPOU_ITEMU+'\',\'F08a(event,'+_vecID+','+(_vec_cena[12]>0?3:0)+','+_jeOtazka+');\',event);"'; 
-	let buyClickStrAll='';
-	if(!_jeOtazka&&_vec_cena[12]<=0)buyClickStrAll='F08a(event,'+_vecID+',0,1,1);';
-	for(var vb in _vec1[4])if(_vec1[4][vb][1]==73){var buyClickStr='onmousedown="F02q(1,\''+LOC_AYS+' buy this item?<br>'+InfoOkienko(LOC_item_vysvetlivka[73])+'\',\'F08a(event,'+_vecID+','+(_vec_cena[12]>0?3:0)+',1);\',event);"';
-	}if(_itemLocked){buyClickStrAll=buyClickStr='';
-	}if(buyClickStr){buyClickStr+=' ontouchstart="disabledShoping2=false; disableMultiShoping=false;"';
-	buyClickStr+=' oncontextmenu="return false"';
-	buyClickStr+=' ontouchend="disableMultiShoping=true; massShopingId=0;" ';
-	}var _item1='';
-	if(jeEventItem&&jeSvetJS!=5)_item1+='<img class="shopitembg" src="'+PicPrefix()+'shop/eventbg'+(event_picK)+(_vecID%2==0?'a':'b')+'.png?v2='+picversion+'_3" alt="1">';
-	else if(_vec_cena[9]==9)_item1+='<img class="shopitembg2" src="'+PicPrefix()+'shop/ghost_bg.png?v2='+picversion+'_3" alt="1">';
-	if(_vec1[5]==199){_item1+=ItemImgModule(_vec1,'posmod75A',' class="shop_pic'+(jeLietajuceIkony?'pulz':'')+'" onmousedown="SetAvatarMenu('+_vecID+');" alt="1"',0,(jeEventItem?'top:40px;':''));
-	}else{_item1+=ItemImg(_vecID,'posmod75A',' class="shop_pic'+(jeLietajuceIkony?'pulz':'')+'" onmousedown="SetAvatarMenu('+_vecID+');" alt="1"',0,(jeEventItem?'top:40px;':''));
-	}if(_vec_cena[9]==9)_item1+='<img class="shopitembg3" src="'+PicPrefix()+'shop/ghost_bg2.png?v2='+picversion+'_5" alt="1">';
-	if(!_jeVypredane||!_robSoldout){if(__mamPocetVeci>=maxVec1&&maxVec1>0)_item1+='<div class="shop_item_xp">'+LOC_SOLD_OUT+'</div>';
-	else{if(_IsActualSaleItem&&__mamPocetVeci<=0){_item1+='<div class="shop_item_cena" onclick="OpenOfferWithItem('+_vecID+');">IN SALE</div>';
-	}else if(_vec_cena[9]==13){_item1+='<div class="shop_item_cena" onclick="OpenChestMenu();">in chests</div>';
-	}else{if(_vec_cena[12]>0){var _cena2=_vec_cena[12];
-	var _xpZaCenu2=F03h(_vec1,_cena2,1,_vec_cena[6],_vec_cena[4]); 
-	if(_myMaxLevel>=_lvlrequired){var _jeOtazka1=((_vec_cena[1]==1||_vec_cena[1]==2)&&uzKupilVec[_vecID]==0&&!somTESTER&&!JE_TESTER?1:0);
-	var buyClickStr1='onmousedown="F02q('+_jeOtazka1+',\''+(_vec_cena[1]==1?LOC_SI_SI_ISTY_UPOU_ITEMU:LOC_SI_SI_ISTY_UPOU_ITEMU_f)+'\',\'F08a(event,'+_vecID+',1,'+_jeOtazka1+');\',event);"';
-	}else{var buyClickStr1='onmousedown="F08a(event,'+_vecID+',0);" ';
-	}if(_myMaxLevel>=_lvlrequired)var buyClickStr2='onmousedown="F02q('+(uzKupilVec[_vecID]==0?1:0)+',\''+LOC_SI_SI_ISTY_UPOU_ITEMU+'\',\'F08a(event,'+_vecID+',2,'+(uzKupilVec[_vecID]==0?1:0)+');\',event);"';else var buyClickStr2=buyClickStr;
-	if(_itemLocked)buyClickStrAll=buyClickStr=buyClickStr2=buyClickStr1='';
-	_item1+='<div class="shop_item_cena1" '+(_cena>hrac[CostTypeReal(_vec_cena[1])]?'':buyClickStr1)+' '+XPzaCenuHint(_xpZaCenu,_vecID,'')+' '+(_cena>hrac[CostType(_vec_cena[1])]?'style="color:#AA0000;"':'')+'>'+LOC_ALT+'&nbsp;'+IconValuta2(_vec_cena[1])+PCisloJS2(_cena,'')+(_vec_cena[1]==5&&_cena>hrac[CostType(_vec_cena[1])]?' <span class="clickspan" onclick="OpenShop1(49,-1);return false;">[+]</span>':'')+(_vec_cena[1]==1&&PredchadzajuciLevel>=20&&_cena>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
-	_item1+='<div class="shop_item_cena2" '+(_cena2>hrac[9]?'':buyClickStr2)+' '+XPzaCenuHint(_xpZaCenu2,_vecID,2)+' '+(_cena2>hrac[CostType(1)]?'style="color:#AA0000;"':'')+'>'+IconValuta2(1)+PCisloJS2(_cena2,'')+(_cena2>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
-	}else 
-	_item1+='<div class="shop_item_cena" '+(_cena>hrac[CostTypeReal(_vec_cena[1])]?'':buyClickStr)+' '+XPzaCenuHint(_xpZaCenu,_vecID,'')+' '+(_cena>hrac[CostType(_vec_cena[1])]?'style="color:#AA0000;"':'')+'>'+IconValuta2(_vec_cena[1])+PCisloJS2(_cena,'')+(_vec_cena[1]==5&&_cena>hrac[CostType(_vec_cena[1])]?' <span class="clickspan" onclick="OpenShop1(49,-1);return false;">[+]</span>':'')+(_vec_cena[1]==1&&PredchadzajuciLevel>=20&&_cena>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
-	if(PredchadzajuciLevel>=15)if(_vec_cena[3]>1&&__mamPocetVeci+1<maxVec1)if(buyClickStrAll!='')if(!kupVecQueue.length){if(isMobile2)_item1+='<div class="shopbuyall_phone wbh" onclick="'+buyClickStrAll+'">BUY ALL</div>';
-	else 
-	_item1+='<div class="shopbuyall wbh" onclick="'+buyClickStrAll+'">BUY ALL</div>';
-	}}}}if(_vec_cena[9]==1&&!IsVip()&&GetMyMaxLevel()>500)_item1+='<img class="highlite vip_shop_button wbh" onclick="OpenShopSettings();" '+F02o('click to open shop settings<br>(you can hide VIP items in the shop settings)<br><br>There are many useful VIP items in the shop, they are not super powerful but can help. Support the Game and its Team by at least one payment and you will have access to all VIP items.')+' src="'+PicPrefix()+'shop/vip_options.png?v=2">';
-	_item1+='<div class="shop_item_meno'+(_vec_cena[9]==9?'_myth':(_vec_cena[9]==10?'_siluet':''))+'">'+(IN_TEST?'['+_vecID+']':'')+MenoItemuNove2(_vec1)+'</div>';
-	//
-	let extraitems = itemyVShopeA[_vecID][1][13]-extraStacksA[_vecID];
-	let extrastring = extraitems?FSize(9,"(+"+extraitems+")"):"";
-	if(maxVec1>0&&(jeLoged||__mamPocetVeci>0))_item1+='<div class="shop_item_pocet" id="shop_vec_'+_vecID+'_pocet">'+FSize(14,__mamPocetVeci)+FSize(9,LOMKA+maxVec1)+extrastring+'</div>';
-	//
-	var bonusySTR='';
-	var bonusySTR_H='';{if(_jeVypredane&&_robSoldout)bonusySTR=LOC_SOLD_OUT;
-	else{bonusySTR=VypisBonusNEW(_vec1,7);
-	}if(PredchadzajuciLevel<MODULE_LVL_REQ+50)if(_vec1[5]==99||_vec1[5]==199){var _moduleHint='Please note - these <b>Module items</b> must be placed into module slots to be active.';
-	bonusySTR+=_moduleHint;
-	bonusySTR_H+='<br>'+_moduleHint;
-	}_item1+='<div class="shop_item_bonuses" '+(PredchadzajuciLevel>20&&bonusySTR_H!=''?F02o(bonusySTR_H,450,'shop_vec_'+_vecID+'_bonuses'):' id="shop_vec_'+_vecID+'_bonuses" ')+'><table class="itemBonusTable" cellspacing="0" cellpadding="0"><tr><td style="position:relative;"><div class="item_popis_td_div">';{_item1+=bonusySTR;
-	}_item1+='</div></td></tr></table></div>';
-	}var _pocetIcons=0;
-	if(_vec_cena[9]==1){_item1+=ShopIconStyle(7,0,0,'vobj','stuha_vip',LOC_SHOP_ITEM_VIP,'F0d(22);');
-	_pocetIcons++;
-	}if($maxKapitol-_vec_cena[5] <draheKapsKoefsLen&&_vec_cena[0]>5&&(_vec_cena[1]==1||_vec_cena[1]==5)){let _kratc=$draheKapsKoefs[$maxKapitol-_vec_cena[5]]+'x';
-	let _kratct='( '+_kratc+' the cost )';
-	_item1+='<div class="shop_new highendlabel highlite"><span>'+_kratc+'</span><img onclick="HighEndInfo('+_vec_cena[5]+')" src="'+PicPrefix()+'shop/stuha_high.png?v=2" '+F02o('High-End item'+BRBR+Bold(_kratct)+BRBR+LOC_cfm,300)+'></div>';
-	}else if(_lvlrequired==_myMaxLevel){_item1+='<img class="shop_new" src="'+PicPrefix()+'shop/stuha_new.png?v=2" '+F02o(LOC_NOVY_ITEM,90)+'>';
-	}if((_vec_cena[10]>0&&_vec_cena[10]<11)||_IsActualSaleItem){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_top','','');
-	_pocetIcons++;
-	}if(GetItemItemAtribut(_vec1,199)){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_retro',LOC_item_vysvetlivka[199],'OpenShop1(-199,-1);');
-	_pocetIcons++;
-	}if(jeEventItem){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','eventicon'+event_picK+'','','');
-	_pocetIcons++;
-	}if(VisibleValorPoints())if(GetItemItemAtribut(_vec1,46)){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_valor','click to display items with valor points','OpenShop1(-46,-1);');
-	_pocetIcons++;
-	}var _item1LockPic='';
-	if(_itemLocked) 
-	_item1+='<img onclick="UnlockMenu('+_vecID+');" src="'+PicPrefix()+'shop/unlock.png?v=2" class="vobj highlite" style="left:192px;top:131" id="shop_vec_'+_vecID+'_unlockbut" onmousedown="return false;" '+F02o('Locked to chapter: '+_vec_cena[5]+(PredchadzajuciLevel>=_vec_cena[6]?'':'<br>and locked to level: '+_vec_cena[6])+'<br><br>Unlock now!')+'>';else if(_vec_cena[9]==13){_item1+='<img '+F02o('This item can be found only in chests and caravan (level 1500).')+' class="shop_inchest" src="'+PicPrefix()+'shop/inchest.png">';
-	}else if(!_dosiaholMax||_vec_cena[2]==0){if(_myMaxLevel>=_lvlrequired||(__mamPocetVeci>0&&GetItemItemAtribut(_vec1,193)<=0)){if(_daSaKupit)_daSaKupit=(_cena>hrac[CostType(_vec_cena[1])]&&_vec_cena[12]<=0?false:true);
-	_item1+='<img class="shop_buy_but'+(_cena>hrac[CostType(_vec_cena[1])]&&_vec_cena[12]<=0?'_n':(_vec_cena[1]==1?'_g':'')+' highlite')+'" src="'+PicPrefix()+'shop/buybut'+(!_daSaKupit?'_n':(_vec_cena[1]==1||(_vec_cena[12]>0&&_vec_cena[6]+plusLevelAlt>PredchadzajuciLevel)?'_g':''))+'.png" '+buyClickStr+' '+(isMobile?' id="shop_vec_'+_vecID+'_buy_but" ':(_daSaKupit?F02o((_vec_cena[12]<=0?LOC_SHOP_BUYBUT+Buyhintshift(_vec_cena[2]):LOC_ALT_cost),(_vec_cena[12]?300:220),'shop_vec_'+_vecID+'_buy_but'):(_nedaSaKupitHint?F02o(_nedaSaKupitHint):'')))+'>';
-	}else{_item1LockPic='<div class="shop_lvl_req" id="shop_vec_'+_vecID+'_lvl_req" onmousedown="return false;" '+buyClickStr+' '+F02o(LOC_POTREBUJES_LEVEL+_lvlrequired)+'><div class="shop_lvl_req_text">'+(_lvlrequired)+'</div></div>';
-	}}if(_len_vnutro)return _item1;
-	var shopBGe=''; 
-	if(_vec_cena[1]==1)shopBGe='_gem';
-	if(_vec_cena[9]==1)shopBGe='_vip';
-	if(_vec_cena[9]==2)shopBGe='_so';
-	if(_vec_cena[9]==10)shopBGe='_siluet';
-	if(_vec_cena[9]==9)shopBGe='_myth';
-	if(_vec_cena[3]==0)shopBGe='_unlimited';
-	if(_vec_cena[9]==13)shopBGe='_inchest';
-	if(_itemLocked)shopBGe='_unlock';
-	if(_requiredVP)shopBGe='_valor';
-	if(GetItemItemAtribut(_vec1,130)) 
-	if(!GetItemItemAtribut(_vec1,130,2)){shopBGe='_refreshing';
-	}if(!_itemLocked)if(_myMaxLevel<_lvlrequired&&__mamPocetVeci<=0) 
-	shopBGe+=' grayscale3';
-	if((_requiredVP&&_requiredVP>GetValorPoints())||lockedUltiMod)shopBGe+=' grayscale4';
-	return'<div class="shop_itemNEST"><div class="shop_blok shop_item2'+shopBGe+'" id="shop_vec_'+_vecID+'" onmousedown="return false;">'+_item1+'</div>'+_item1LockPic+'</div>';
-	}
+function ShopItemBlok(_vec1,_len_vnutro,_robSoldout,_lenCiSaDa){if(!_vec1){return'';
+}var _itemLocked=false;
+var _daSaKupit=true;
+var _nedaSaKupitHint='';
+var _vec_cena=_vec1[1];
+var _cena=F06b(_vec1);
+var _vecID=_vec1[0];
+var _xpZaCenu=F03h(_vec1,_cena,_vec_cena[1],_vec_cena[6],_vec_cena[4]);
+var _lvlrequired=F02h(_vec1);
+let _myMaxLevel=GetMyMaxLevel();
+var maxVec1=F05j(_vec1);
+var _jeVypredane=false;
+if(!_robSoldout)_robSoldout=0;
+let __mamPocetVeci=F05p(_vecID);
+var _testLock=false;
+if(_vec_cena[5]>hrac[11]) 
+if(__mamPocetVeci<=0){if(_maxLockedItems<MAX_LOCKED_ITEMS_KUK)if(PredchadzajuciLevel+100>_vec_cena[6])if(PredchadzajuciLevel>500)if(_vec_cena[9]==0)if(_vec_cena[12]==0)if(_vec_cena[1]==5||_vec_cena[1]==0)if(_vec_cena[5]<hrac[11]+5+(_testLock?5:0)) 
+if(_vec1[4].length<=1)if(IsInArray(_vec1[4][0][1],unlockableAtts)){_itemLocked=true;
+_maxLockedItems++;
+}}var _dosiaholMax=(__mamPocetVeci>=maxVec1?1:0); 
+if(maxVec1)if(!ajKupene&&!IsInArray(_vecID,posledne_kupeneVeci))if(_dosiaholMax){_jeVypredane=true;
+if(!_robSoldout){return'';
+}}if(onlyNonBoughtItems&&__mamPocetVeci>0){return'';
+}if(_vec1[5]==99){return'';
+}if(__mamPocetVeci==0){if(_vec1[5]==36)if((activeShopFilter!=0&&activeShopFilter!=10)||pocetPrejdeniNa1Session<8)if(!IN_TEST)return'';
+if(_vec1[5]==37)if((activeShopFilter!=0&&activeShopFilter!=10)||pocetPrejdeniNa1Session<4)return'';
+}if(_vec1[5]==34||_vec1[5]==35){if(hracVeciA[SECRET_THIRD_EYE_ID]){}else{if(__mamPocetVeci==0)if(pocetSecretItemovVidno>=2)return'';
+if(_vec1[5]==34){if(hrac[131]%4!=0) 
+return'';else if((pocetShopOtvoreni%17)!=4+(_vec1[0]+3)%9)return'';
+}if(_vec1[5]==35)if(__mamPocetVeci<maxVec1){if((pocetShopOtvoreni%17)!=3+(_vec1[0]+3)%9)return'';
+}}}var jeEventItem=(_vec_cena[9]==6?1:0);
+var jeEventCost=(_vec_cena[1]==6?1:0);
+if(vipShopFilter==1&&_vec_cena[9]!=1)return'';
+if(!visibleVIPitems&&_vec_cena[9]==1)return'';
+if(_vec_cena[1]==8&&!SuRubiny()) 
+return'';
+if(_vec_cena[9]==8&&__mamPocetVeci==0) 
+return'';
+if(_vec_cena[9]==12&&__mamPocetVeci==0) 
+return'';
+if(itemBonusOverview[115]==0)if((_vec_cena[9]==9 )&&_vec1[0]%25!=PredchadzajuciLevel%25) 
+if(__mamPocetVeci==0)return'';
+if((_vec_cena[7]==7||_vec1[3]=='et')&&__mamPocetVeci==0) 
+return'';
+if(jeEventItem&&!IsEvent(86400*4)&&__mamPocetVeci==0) 
+return'';
+if(jeEventItem&&!IsEvent(86400*4)&&!ajKupene) 
+return'';
+else if(jeEventItem&&(!IsEvent(604800)&&(__mamPocetVeci<=0||!ajKupene )))return'';
+if(jeEventItem&&(activeShopFilter!=11&&activeShopFilter!=10&&activeShopFilter!=0)&&activeShopFilter<1000000)return'';
+if(jeEventItem)if(!IsEvent())if(_vec1[1][0]>hrac[98]) 
+return'';
+if(jeEventCost) if(!jeEventItem){if(IsEvent())return'';
+if(_vec1[1][0]>hrac[98])return'';
+}if(jeEventItem) if(PredchadzajuciLevel<600)if(_vec1[1][0]>hrac[98]+5)if(__mamPocetVeci<=0)return'';
+if(!IsRetroWeek())if(GetItemItemAtribut(_vec1,199))return'';
+if(_vec1[5]!=199){if(hrac[132]<=0)if(GetItemItemAtribut(_vec1,186))return'';
+if(GetItemItemAtribut(_vec1,65)){if(!IsCWactiv()&&!IsClanDiggingActive()&&!IsPlagueActive()){return'';
+}}}if(_vec_cena[9]==13){if(!ajKupene||__mamPocetVeci==0){return'';
+}}var _IsActualSaleItem=false;
+if(__mamPocetVeci==0){if(_vec_cena[9]==11){return'';
+}if(_vec_cena[9]==2){if(pocetSaleItemsInShop>=2){return'';
+}if(_vec1[5]!=199){_IsActualSaleItem=IsSaleItem(_vec1[0]);
+}if(!_IsActualSaleItem){return'';
+}pocetSaleItemsInShop++;
+}if((_vec_cena[9]==3||_vec_cena[9]==4)) 
+return'';
+}if(_vec_cena[9]==5&&!IsVip()) 
+return'';
+if(!MaArenu()&&_vec1[3]=='a'){return'';
+}if(PredchadzajuciLevel<300&&hrac[18]>=GetMaxFuelCap()){for(let vb in _vec1[4]){if(_vec1[4][vb][1]==40){return'';
+}}}var _requiredItem=0;
+var _requiredVP=0;
+if(_vec1[5]!=199){_requiredItem=GetItemItemAtribut(_vec1,105);
+if(_requiredItem){if(!MamVykupenuVec(_requiredItem)&&__mamPocetVeci==0){return'';
+}}_requiredVP=GetItemItemAtribut(_vec1,155);
+if(GetValorPoints()<_requiredVP){_daSaKupit=false;
+}if(GetValorPoints()+100<_requiredVP&&!(_requiredVP%1000==0&&GetValorPoints()+2000>=_requiredVP)){return'';
+}}let _requiredDATE=GetItemItemAtribut(_vec1,58,2);
+if(Math.max(PHPtime4,hrac[129])<=_requiredDATE){return'';
+}var lockedUltiMod=false;
+if(IsVip()&&_vecID==3407){return'';
+}if(_itemLocked) if(costfilter>0){return'';
+}if(GetItemItemAtribut(_vec1,232)){return'';
+}if(_vecID==3597&&itemyNeskorPocet<=0){return'';
+}if(refundItems2[_vecID]){return'';}
+//
+soonItemsBarAdd(_vecID);
+//
+if(_vec_cena[5]>hrac[11]) 
+if(__mamPocetVeci<=0)if(!_itemLocked){return'';
+}if(!_itemLocked)if(_lvlrequired>_myMaxLevel+(PredchadzajuciLevel<5?0:1)&&__mamPocetVeci==0&&_vecID!=3)return'';
+if(_vec1[4])if(_vec1[4][0][1]==115){if(itemBonusOverview[116]>=MAX_items_mythical){return'';
+}}{if(hladamAtts.length||lastSearch!=''){let nasielAtt=false;
+if(hladamAtts.length>0){if(_vec1[5]==36||_vec1[5]==37) if(__mamPocetVeci<=0) 
+return'';
+for(let b1 in _vec1[4]){if(hladamAtts.indexOf(_vec1[4][b1][1]*1)>=0){nasielAtt=true;
+break;
+}}}if(!nasielAtt&&lastSearch!=''){let _meno='';
+_meno=MenoItemuNove2(_vec1).toLowerCase();
+if(_meno.indexOf(lastSearch)<0){return'';
+}}if(_vec1[5]==34||_vec1[5]==35){return'';
+}}}if(_lenCiSaDa){if(_dosiaholMax)return'';
+if(_myMaxLevel<_lvlrequired&&__mamPocetVeci<=0)return'';
+if(_vec1[5]==34||_vec1[5]==35)pocetSecretItemovVidno++;
+return 1;
+}if(_vec1[5]==34||_vec1[5]==35){pocetSecretItemovVidno++;
+}var _jeOtazka=((_vec_cena[1]==1||_vec_cena[1]==2||_vec_cena[1]==7)&&uzKupilVec[_vecID]==0&&_vec_cena[12]<=0?1:0);
+var buyClickStr='onmousedown="F02q('+_jeOtazka+',\''+LOC_SI_SI_ISTY_UPOU_ITEMU+'\',\'F08a(event,'+_vecID+','+(_vec_cena[12]>0?3:0)+','+_jeOtazka+');\',event);"'; 
+let buyClickStrAll='';
+if(!_jeOtazka&&_vec_cena[12]<=0)buyClickStrAll='F08a(event,'+_vecID+',0,1,1);';
+for(var vb in _vec1[4])if(_vec1[4][vb][1]==73){var buyClickStr='onmousedown="F02q(1,\''+LOC_AYS+' buy this item?<br>'+InfoOkienko(LOC_item_vysvetlivka[73])+'\',\'F08a(event,'+_vecID+','+(_vec_cena[12]>0?3:0)+',1);\',event);"';
+}if(_itemLocked){buyClickStrAll=buyClickStr='';
+}if(buyClickStr){buyClickStr+=' ontouchstart="disabledShoping2=false; disableMultiShoping=false;"';
+buyClickStr+=' oncontextmenu="return false"';
+buyClickStr+=' ontouchend="disableMultiShoping=true; massShopingId=0;" ';
+}var _item1='';
+if(jeEventItem&&jeSvetJS!=5)_item1+='<img class="shopitembg" src="'+PicPrefix()+'shop/eventbg'+(event_picK)+(_vecID%2==0?'a':'b')+'.png?v2='+picversion+'_3" alt="1">';
+else if(_vec_cena[9]==9)_item1+='<img class="shopitembg2" src="'+PicPrefix()+'shop/ghost_bg.png?v2='+picversion+'_3" alt="1">';
+if(_vec1[5]==199){_item1+=ItemImgModule(_vec1,'posmod75A',' class="shop_pic'+(jeLietajuceIkony?'pulz':'')+'" onmousedown="SetAvatarMenu('+_vecID+');" alt="1"',0,(jeEventItem?'top:40px;':''));
+}else{_item1+=ItemImg(_vecID,'posmod75A',' class="shop_pic'+(jeLietajuceIkony?'pulz':'')+'" onmousedown="SetAvatarMenu('+_vecID+');" alt="1"',0,(jeEventItem?'top:40px;':''));
+}if(_vec_cena[9]==9)_item1+='<img class="shopitembg3" src="'+PicPrefix()+'shop/ghost_bg2.png?v2='+picversion+'_5" alt="1">';
+if(!_jeVypredane||!_robSoldout){if(__mamPocetVeci>=maxVec1&&maxVec1>0)_item1+='<div class="shop_item_xp">'+LOC_SOLD_OUT+'</div>';
+else{if(_IsActualSaleItem&&__mamPocetVeci<=0){_item1+='<div class="shop_item_cena" onclick="OpenOfferWithItem('+_vecID+');">IN SALE</div>';
+}else if(_vec_cena[9]==13){_item1+='<div class="shop_item_cena" onclick="OpenChestMenu();">in chests</div>';
+}else{if(_vec_cena[12]>0){var _cena2=_vec_cena[12];
+var _xpZaCenu2=F03h(_vec1,_cena2,1,_vec_cena[6],_vec_cena[4]); 
+if(_myMaxLevel>=_lvlrequired){var _jeOtazka1=((_vec_cena[1]==1||_vec_cena[1]==2)&&uzKupilVec[_vecID]==0&&!somTESTER&&!JE_TESTER?1:0);
+var buyClickStr1='onmousedown="F02q('+_jeOtazka1+',\''+(_vec_cena[1]==1?LOC_SI_SI_ISTY_UPOU_ITEMU:LOC_SI_SI_ISTY_UPOU_ITEMU_f)+'\',\'F08a(event,'+_vecID+',1,'+_jeOtazka1+');\',event);"';
+}else{var buyClickStr1='onmousedown="F08a(event,'+_vecID+',0);" ';
+}if(_myMaxLevel>=_lvlrequired)var buyClickStr2='onmousedown="F02q('+(uzKupilVec[_vecID]==0?1:0)+',\''+LOC_SI_SI_ISTY_UPOU_ITEMU+'\',\'F08a(event,'+_vecID+',2,'+(uzKupilVec[_vecID]==0?1:0)+');\',event);"';else var buyClickStr2=buyClickStr;
+if(_itemLocked)buyClickStrAll=buyClickStr=buyClickStr2=buyClickStr1='';
+_item1+='<div class="shop_item_cena1" '+(_cena>hrac[CostTypeReal(_vec_cena[1])]?'':buyClickStr1)+' '+XPzaCenuHint(_xpZaCenu,_vecID,'')+' '+(_cena>hrac[CostType(_vec_cena[1])]?'style="color:#AA0000;"':'')+'>'+LOC_ALT+'&nbsp;'+IconValuta2(_vec_cena[1])+PCisloJS2(_cena,'')+(_vec_cena[1]==5&&_cena>hrac[CostType(_vec_cena[1])]?' <span class="clickspan" onclick="OpenShop1(49,-1);return false;">[+]</span>':'')+(_vec_cena[1]==1&&PredchadzajuciLevel>=20&&_cena>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
+_item1+='<div class="shop_item_cena2" '+(_cena2>hrac[9]?'':buyClickStr2)+' '+XPzaCenuHint(_xpZaCenu2,_vecID,2)+' '+(_cena2>hrac[CostType(1)]?'style="color:#AA0000;"':'')+'>'+IconValuta2(1)+PCisloJS2(_cena2,'')+(_cena2>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
+}else 
+_item1+='<div class="shop_item_cena" '+(_cena>hrac[CostTypeReal(_vec_cena[1])]?'':buyClickStr)+' '+XPzaCenuHint(_xpZaCenu,_vecID,'')+' '+(_cena>hrac[CostType(_vec_cena[1])]?'style="color:#AA0000;"':'')+'>'+IconValuta2(_vec_cena[1])+PCisloJS2(_cena,'')+(_vec_cena[1]==5&&_cena>hrac[CostType(_vec_cena[1])]?' <span class="clickspan" onclick="OpenShop1(49,-1);return false;">[+]</span>':'')+(_vec_cena[1]==1&&PredchadzajuciLevel>=20&&_cena>hrac[9]?' <span class="clickspan" onclick="OtvorOknoGemyLepsie(19);return false;">[+]</span>':'')+'</div>';
+if(PredchadzajuciLevel>=15)if(_vec_cena[3]>1&&__mamPocetVeci+1<maxVec1)if(buyClickStrAll!='')if(!kupVecQueue.length){if(isMobile2)_item1+='<div class="shopbuyall_phone wbh" onclick="'+buyClickStrAll+'">BUY ALL</div>';
+else 
+_item1+='<div class="shopbuyall wbh" onclick="'+buyClickStrAll+'">BUY ALL</div>';
+}}}}if(_vec_cena[9]==1&&!IsVip()&&GetMyMaxLevel()>500)_item1+='<img class="highlite vip_shop_button wbh" onclick="OpenShopSettings();" '+F02o('click to open shop settings<br>(you can hide VIP items in the shop settings)<br><br>There are many useful VIP items in the shop, they are not super powerful but can help. Support the Game and its Team by at least one payment and you will have access to all VIP items.')+' src="'+PicPrefix()+'shop/vip_options.png?v=2">';
+_item1+='<div class="shop_item_meno'+(_vec_cena[9]==9?'_myth':(_vec_cena[9]==10?'_siluet':''))+'">'+(IN_TEST?'['+_vecID+']':'')+MenoItemuNove2(_vec1)+'</div>';
+//
+let extraitems = itemyVShopeA[_vecID][1][13]-extraStacksA[_vecID];
+let extrastring = extraitems?FSize(9,"(+"+extraitems+")"):"";
+if(maxVec1>0&&(jeLoged||__mamPocetVeci>0))_item1+='<div class="shop_item_pocet" id="shop_vec_'+_vecID+'_pocet">'+FSize(14,__mamPocetVeci)+FSize(9,LOMKA+maxVec1)+extrastring+'</div>';
+//
+var bonusySTR='';
+var bonusySTR_H='';{if(_jeVypredane&&_robSoldout)bonusySTR=LOC_SOLD_OUT;
+else{bonusySTR=VypisBonusNEW(_vec1,7);
+}if(PredchadzajuciLevel<MODULE_LVL_REQ+50)if(_vec1[5]==99||_vec1[5]==199){var _moduleHint='Please note - these <b>Module items</b> must be placed into module slots to be active.';
+bonusySTR+=_moduleHint;
+bonusySTR_H+='<br>'+_moduleHint;
+}_item1+='<div class="shop_item_bonuses" '+(PredchadzajuciLevel>20&&bonusySTR_H!=''?F02o(bonusySTR_H,450,'shop_vec_'+_vecID+'_bonuses'):' id="shop_vec_'+_vecID+'_bonuses" ')+'><table class="itemBonusTable" cellspacing="0" cellpadding="0"><tr><td style="position:relative;"><div class="item_popis_td_div">';{_item1+=bonusySTR;
+}_item1+='</div></td></tr></table></div>';
+}var _pocetIcons=0;
+if(_vec_cena[9]==1){_item1+=ShopIconStyle(7,0,0,'vobj','stuha_vip',LOC_SHOP_ITEM_VIP,'F0d(22);');
+_pocetIcons++;
+}if($maxKapitol-_vec_cena[5] <draheKapsKoefsLen&&_vec_cena[0]>5&&(_vec_cena[1]==1||_vec_cena[1]==5)){let _kratc=$draheKapsKoefs[$maxKapitol-_vec_cena[5]]+'x';
+let _kratct='( '+_kratc+' the cost )';
+_item1+='<div class="shop_new highendlabel highlite"><span>'+_kratc+'</span><img onclick="HighEndInfo('+_vec_cena[5]+')" src="'+PicPrefix()+'shop/stuha_high.png?v=2" '+F02o('High-End item'+BRBR+Bold(_kratct)+BRBR+LOC_cfm,300)+'></div>';
+}else if(_lvlrequired==_myMaxLevel){_item1+='<img class="shop_new" src="'+PicPrefix()+'shop/stuha_new.png?v=2" '+F02o(LOC_NOVY_ITEM,90)+'>';
+}if((_vec_cena[10]>0&&_vec_cena[10]<11)||_IsActualSaleItem){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_top','','');
+_pocetIcons++;
+}if(GetItemItemAtribut(_vec1,199)){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_retro',LOC_item_vysvetlivka[199],'OpenShop1(-199,-1);');
+_pocetIcons++;
+}if(jeEventItem){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','eventicon'+event_picK+'','','');
+_pocetIcons++;
+}if(VisibleValorPoints())if(GetItemItemAtribut(_vec1,46)){_item1+=ShopIconStyle(0,_pocetIcons,-4,'vobj','icon_valor','click to display items with valor points','OpenShop1(-46,-1);');
+_pocetIcons++;
+}var _item1LockPic='';
+if(_itemLocked) 
+_item1+='<img onclick="UnlockMenu('+_vecID+');" src="'+PicPrefix()+'shop/unlock.png?v=2" class="vobj highlite" style="left:192px;top:131" id="shop_vec_'+_vecID+'_unlockbut" onmousedown="return false;" '+F02o('Locked to chapter: '+_vec_cena[5]+(PredchadzajuciLevel>=_vec_cena[6]?'':'<br>and locked to level: '+_vec_cena[6])+'<br><br>Unlock now!')+'>';else if(_vec_cena[9]==13){_item1+='<img '+F02o('This item can be found only in chests and caravan (level 1500).')+' class="shop_inchest" src="'+PicPrefix()+'shop/inchest.png">';
+}else if(!_dosiaholMax||_vec_cena[2]==0){if(_myMaxLevel>=_lvlrequired||(__mamPocetVeci>0&&GetItemItemAtribut(_vec1,193)<=0)){if(_daSaKupit)_daSaKupit=(_cena>hrac[CostType(_vec_cena[1])]&&_vec_cena[12]<=0?false:true);
+_item1+='<img class="shop_buy_but'+(_cena>hrac[CostType(_vec_cena[1])]&&_vec_cena[12]<=0?'_n':(_vec_cena[1]==1?'_g':'')+' highlite')+'" src="'+PicPrefix()+'shop/buybut'+(!_daSaKupit?'_n':(_vec_cena[1]==1||(_vec_cena[12]>0&&_vec_cena[6]+plusLevelAlt>PredchadzajuciLevel)?'_g':''))+'.png" '+buyClickStr+' '+(isMobile?' id="shop_vec_'+_vecID+'_buy_but" ':(_daSaKupit?F02o((_vec_cena[12]<=0?LOC_SHOP_BUYBUT+Buyhintshift(_vec_cena[2]):LOC_ALT_cost),(_vec_cena[12]?300:220),'shop_vec_'+_vecID+'_buy_but'):(_nedaSaKupitHint?F02o(_nedaSaKupitHint):'')))+'>';
+if(_vec1[5]==199&&PredchadzajuciLevel>=LEVEL_OCTAGON){_item1+='<img '+F02o('Buy this item and trash it into M-Cores<br>(hold shift to avoid confirm popup)')+' src="'+PicPrefix()+'icons2/icon_mcores.png" class="shopTrashBut highlite" onclick="TrashFromShop(event,'+_vec1[0]+');">';
+}}else{_item1LockPic='<div class="shop_lvl_req" id="shop_vec_'+_vecID+'_lvl_req" onmousedown="return false;" '+buyClickStr+' '+F02o(LOC_POTREBUJES_LEVEL+_lvlrequired)+'><div class="shop_lvl_req_text">'+(_lvlrequired)+'</div></div>';
+}}if(_len_vnutro)return _item1;
+var shopBGe=''; 
+if(_vec_cena[1]==1)shopBGe='_gem';
+if(_vec_cena[9]==1)shopBGe='_vip';
+if(_vec_cena[9]==2)shopBGe='_so';
+if(_vec_cena[9]==10)shopBGe='_siluet';
+if(_vec_cena[9]==9)shopBGe='_myth';
+if(_vec_cena[3]==0)shopBGe='_unlimited';
+if(_vec_cena[9]==13)shopBGe='_inchest';
+if(_itemLocked)shopBGe='_unlock';
+if(_requiredVP)shopBGe='_valor';
+if(GetItemItemAtribut(_vec1,130)) 
+if(!GetItemItemAtribut(_vec1,130,2)){shopBGe='_refreshing';
+}if(!_itemLocked)if(_myMaxLevel<_lvlrequired&&__mamPocetVeci<=0) 
+shopBGe+=' grayscale3';
+if((_requiredVP&&_requiredVP>GetValorPoints())||lockedUltiMod)shopBGe+=' grayscale4';
+return'<div class="shop_itemNEST"><div class="shop_blok shop_item2'+shopBGe+'" id="shop_vec_'+_vecID+'" onmousedown="return false;">'+_item1+'</div>'+_item1LockPic+'</div>';
+}
 
 function soonItemsBarAdd(_vecID){
 	let _vec1 = itemyVShopeA[_vecID];
@@ -713,3 +723,4 @@ function soonItemsBarAdd(_vecID){
 		}
 	}
 }
+
